@@ -1,0 +1,16 @@
+Schemes:
+  SK(A,B,C)
+Facts:
+  SK('a','c','c').
+  SK('b','c','b').
+  SK('b','b','c').
+  SK('a','a','a').
+  SK('b','c','b').
+Rules:
+  DoNothing(Z) :- Stuff(Z),SK(A,B,C).
+Queries:
+  SK(A,'c',A)?
+  SK(X,Y,'b')?
+  SK(X,X,X)?
+  SK(A,B,C)?
+  SK('a','a','a')?
