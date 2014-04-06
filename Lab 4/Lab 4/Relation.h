@@ -21,14 +21,14 @@ class Relation {
 public:
 
 	//Instance Variable
-	vector<Tuple> rows;
+	set<Tuple> rows;
 	vector<Token> schema;
 	string name;
 	//Relation editedRelation;
 
 	//Constructor and Destructor
 	Relation();
-	Relation(vector<Tuple> tuples, vector<Token> schema);
+	Relation(set<Tuple> tuples, vector<Token> schema);
 	Relation(vector<Token> schema, string name);
 	virtual ~Relation();
 
@@ -48,6 +48,7 @@ private:
 	Relation rename(Queries query, Relation relation);
 	Relation select(Queries query, Relation relation);
 	Relation project(Queries query, Relation relation);
+    Tuple getRowAtIndex(int index);
 };
 
 #endif /* RELATION_H_ */

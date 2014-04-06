@@ -9,13 +9,14 @@
 #include <sstream>
 #include <map>
 #include <algorithm>
+#include <iterator>
 
 Relation::Relation() {
 	// TODO Auto-generated constructor stub
 
 }
 
-Relation::Relation(vector<Tuple> tuples, vector<Token> schema){
+Relation::Relation(set<Tuple> tuples, vector<Token> schema){
 	this->rows = tuples;
 	this->schema = schema;
 	//this->editedRelation = new Relation();
@@ -41,7 +42,7 @@ string Relation::toString(){
 			result << schema[i].getTokensValue() << ")";
 	}
 	for(int i=0; i<rows.size(); i++){
-		result << "\n" << rows[i].toString();
+		result << "\n" << getRowAtIndex(i).toString();
 	}
 	result << "\n";
 	return result.str();
@@ -54,10 +55,10 @@ string Relation::toFinalString(Queries query){
 		for(int i=0; i<rows.size(); i++){
 			for(int j=0; j<schema.size(); j++){
 				if(j==0){
-					result << "  " << schema[j].getTokensValue() << "=" << rows[i].elements[j].getTokensValue();
+					result << "  " << schema[j].getTokensValue() << "=" << getRowAtIndex(i).elements[j].getTokensValue();
 				}
 				else{
-					result << ", " << schema[j].getTokensValue() << "=" << rows[i].elements[j].getTokensValue();
+					result << ", " << schema[j].getTokensValue() << "=" << getRowAtIndex(i).elements[j].getTokensValue();
 				}
 			}
 			if(schema.size()>0){
@@ -73,38 +74,31 @@ string Relation::toFinalString(Queries query){
 
 void Relation::addTuple(Tuple tuple){
 	// Check to see if tuple already exists
-	bool anyMatch = false;
-	for(int i=0; i<rows.size(); i++){
-		bool rowMatch = true;
-		for(int j=0; j<tuple.elements.size(); j++){
-			if(tuple.elements[j].getTokenType() == STRING){
-				if(tuple.elements[j].getTokensValue().compare(rows[i].elements[j].getTokensValue())){
-					// Do nothing
-					rowMatch = false;
-					//cout<< "1";
-				}
-				else{
-					//cout<< "2";
-				}
-			}
-		}
-		if(rowMatch == true){
-			anyMatch = true;
-		}
-	}
+//	bool anyMatch = false;
+//	for(int i=0; i<rows.size(); i++){
+//		bool rowMatch = true;
+//		for(int j=0; j<tuple.elements.size(); j++){
+//			if(tuple.elements[j].getTokenType() == STRING){
+//				if(tuple.elements[j].getTokensValue().compare(getRowAtIndex(i).elements[j].getTokensValue())){
+//					// Do nothing
+//					rowMatch = false;
+//					//cout<< "1";
+//				}
+//				else{
+//					//cout<< "2";
+//				}
+//			}
+//		}
+//		if(rowMatch == true){
+//			anyMatch = true;
+//		}
+//	}
 
-	if(!anyMatch){
-		this->rows.push_back(tuple);
+//	if(!anyMatch){
+		this->rows.insert(tuple);
 		//Sort the rows from the relation
-		sort(rows.begin(), rows.end());
-	}
-}
-
-
-void Relation::deleteTuple(int index){
-
-	this->rows.erase(rows.begin() + index);
-
+//		sort(rows.begin(), rows.end());
+//	}
 }
 
 string Relation::parse(Queries query){
@@ -129,21 +123,21 @@ Relation Relation::rename(Queries query, Relation relation){
 }
 
 Relation Relation::select(Queries query, Relation relation){
-	vector<Tuple> newRows;
+	set<Tuple> newRows;
 	Tuple tuple = query.getTuple();
 	for(int i=0; i<relation.rows.size(); i++){
 		bool selected = true;
 		map<string, string> idMap;
 		for(int j=0; j<tuple.elements.size(); j++){
 			if(tuple.elements[j].getTokenType() == STRING){
-				if(tuple.elements[j].getTokensValue().compare(relation.rows[i].elements[j].getTokensValue())){
+				if(tuple.elements[j].getTokensValue().compare(relation.getRowAtIndex(i).elements[j].getTokensValue())){
 					selected = false;
 				}
 			}
 			else if(tuple.elements[j].getTokenType() == ID){
 				if(idMap.find(tuple.elements[j].getTokensValue()) != idMap.end()){
 					// Key is found
-					if(idMap[tuple.elements[j].getTokensValue()] == relation.rows[i].elements[j].getTokensValue()){
+					if(idMap[tuple.elements[j].getTokensValue()] == relation.getRowAtIndex(i).elements[j].getTokensValue()){
 						// Passes
 					}
 					else{
@@ -153,14 +147,14 @@ Relation Relation::select(Queries query, Relation relation){
 				}
 				else{
 					// Key was not found
-					idMap[tuple.elements[j].getTokensValue()] = relation.rows[i].elements[j].getTokensValue();
+					idMap[tuple.elements[j].getTokensValue()] = relation.getRowAtIndex(i).elements[j].getTokensValue();
 				}
 			}
 		}
 
 		if(selected)
 		{
-			newRows.push_back(relation.rows[i]);
+			newRows.insert(relation.getRowAtIndex(i));
 		}
 	}
 
@@ -175,7 +169,7 @@ Relation Relation::project(Queries query, Relation relation){
 	// Create a new Relation that add only the elements and schema that we are projecting
 
 	Tuple tuple = query.getTuple();
-	vector<Tuple> newRows;
+	set<Tuple> newRows;
 	vector<Token> newSchema;
 	// check rows
 	for(int i=0; i<relation.rows.size(); i++){
@@ -190,12 +184,12 @@ Relation Relation::project(Queries query, Relation relation){
 					if(i==0){
 						newSchema.push_back(relation.schema[j]);
 					}
-					newElements.push_back(relation.rows[i].elements[j]);
+					newElements.push_back(relation.getRowAtIndex(i).elements[j]);
 				}
 			}
 		}
 		Tuple newTuple(newElements);
-		newRows.push_back(newTuple);
+		newRows.insert(newTuple);
 	}
 
 	relation.rows = newRows;
@@ -208,8 +202,8 @@ Relation Relation::crossProduct(Relation relation1, Relation relation2){
     Relation newRelation;
     for (int i=0; i<relation1.rows.size(); i++) {
         for (int j=0; j<relation2.rows.size(); j++) {
-            vector<Token> newVector = relation1.rows[i].elements;
-            newVector.insert(newVector.end(), relation2.rows[j].elements.begin() ,relation2.rows[j].elements.end());
+            vector<Token> newVector = relation1.getRowAtIndex(i).elements;
+            newVector.insert(newVector.end(), relation2.getRowAtIndex(i).elements.begin() ,relation2.getRowAtIndex(j).elements.end());
             Tuple newTuple(newVector);
             newRelation.addTuple(newTuple);
         }
@@ -240,16 +234,16 @@ Relation Relation::naturalJoin(Relation relation1, Relation relation2){
         for (int j=0; j<relation2.rows.size(); j++) {
             bool equal = true;
             for (int k=0; k<pairIndexes.size(); k++) {
-                if (relation1.rows[i].elements[pairIndexes[k].first].getTokensValue().compare(relation2.rows[j].elements[pairIndexes[k].second].getTokensValue())) {
+                if (relation1.getRowAtIndex(i).elements[pairIndexes[k].first].getTokensValue().compare(relation2.getRowAtIndex(j).elements[pairIndexes[k].second].getTokensValue())) {
                     equal = false;
                 }
             }
             if (equal) {
-                vector<Token> newVector = relation1.rows[i].elements;
-                vector<Token> vectorToProject = relation2.rows[j].elements;
+                vector<Token> newVector = relation1.getRowAtIndex(i).elements;
+                vector<Token> vectorToProject = relation2.getRowAtIndex(i).elements;
                 
                 //Eliminate Intersected Columns
-                for (int k=pairIndexes.size() - 1; k>=0; k--) {
+                for (int k=pairIndexes.size() - 1.0; k>=0; k--) {
                     vectorToProject.erase(vectorToProject.begin() + pairIndexes[k].second);
                 }
                 
@@ -264,13 +258,25 @@ Relation Relation::naturalJoin(Relation relation1, Relation relation2){
     vector<Token> schemaToEdit = relation2.schema;
     
     //Eliminate intercept columns in the schema
-    for (int i=pairIndexes.size()-1; i>=0; i--) {
+    for (int i=pairIndexes.size()-1.0; i>=0; i--) {
         schemaToEdit.erase(schemaToEdit.begin() + pairIndexes[i].second);
     }
     newSchema.insert(newSchema.end(), schemaToEdit.begin(), schemaToEdit.end());
     newRelation.schema = newSchema;
     
     return newRelation;
+}
+
+Tuple Relation::getRowAtIndex(int index){
+    set<Tuple>::iterator it = rows.begin();
+    advance(it, index); // now it is advanced by index
+    return *it;
+}
+
+void Relation::deleteTuple(int index){
+    set<Tuple>::iterator it = rows.begin();
+    advance(it, index); // now it is advanced by index
+	this->rows.erase(it);
 }
 
 
