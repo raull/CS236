@@ -10,6 +10,8 @@
 
 #include <vector>
 #include "Token.h"
+#include "Tuple.h"
+#include "Predicates.h"
 #include <iostream>
 
 class Rules {
@@ -17,8 +19,12 @@ public:
 	Rules();
 	virtual ~Rules();
 	vector<Token *> valueList;
+    
+    Predicates headPredicate;
+    vector<Predicates> predicateList;
 
 	std::string toString() const;
+    //void parseElements();
 };
 
 #endif /* RULES_H_ */

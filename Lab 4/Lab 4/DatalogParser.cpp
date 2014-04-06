@@ -16,6 +16,9 @@
 #define PARSING_RULES 3
 #define PARSING_QUERIES 4
 
+#define PARSING_HEADPREDICATE 5
+#define PARSING_PREDICATE 6
+
 
 DatalogParser::DatalogParser(vector<Token *> tokens) {
 	tokenList = tokens;
@@ -23,6 +26,7 @@ DatalogParser::DatalogParser(vector<Token *> tokens) {
 	currentToken = tokens[index];
 	prevToken = currentToken;
 	parseState = 0;
+    parseRuleState = 0;
 }
 
 DatalogParser::~DatalogParser() {
@@ -32,6 +36,9 @@ DatalogParser::~DatalogParser() {
 bool DatalogParser::parse(){
 	if(parseSchemes() && parseFacts() && parseRules() && parseQueries()){
 		//cout<< toString();
+        //cout << "Head Predicate\n";
+        //cout << rules.size();
+        //cout << "Predicates\n";
 		return true;
 	}
 	else{
@@ -242,6 +249,9 @@ bool DatalogParser::nQuery(){
 }
 
 bool DatalogParser::nHeadPredicate(){
+    parseRuleState = PARSING_HEADPREDICATE;
+    Predicates newPredicate;
+    rules.back()->headPredicate = newPredicate;
 	if(nId() && nLeftParen() && nId() && nIdList() && nRightParen()){
 		return true;
 	}
@@ -251,10 +261,18 @@ bool DatalogParser::nHeadPredicate(){
 }
 
 bool DatalogParser::nPredicate(){
+    parseRuleState = PARSING_PREDICATE;
+    Predicates newPredicate;
+    if (parseState == PARSING_RULES) {
+        rules.back()->predicateList.push_back(newPredicate);
+    }
 	if(nId() && nLeftParen() && nParameter() && nParameterList() && nRightParen()){
 		return true;
 	}
 	else{
+        if (parseState == PARSING_RULES) {
+            rules.back()->predicateList.pop_back();
+        }
 		return false;
 	}
 }
@@ -489,6 +507,23 @@ void DatalogParser::storeToken(Token* token){
 	}
 	else if(parseState == PARSING_RULES){
 		rules.back()->valueList.push_back(token);
+        // Check which side of the rule we are parsing
+        if (parseRuleState == PARSING_HEADPREDICATE && token->getTokenType() == ID) {
+            if(!rules.back()->headPredicate.name.compare("")){ // Ask if the name has been given
+                rules.back()->headPredicate.name = token->getTokensValue();
+            }
+            else{
+                rules.back()->headPredicate.tuple.elements.push_back(*token);
+            }
+        }
+        else if (parseRuleState == PARSING_PREDICATE && (token->getTokenType() == STRING|| token->getTokenType() == ID)){
+            if(!rules.back()->predicateList.back().name.compare("")){
+                rules.back()->predicateList.back().name = token->getTokensValue();
+            }
+            else{
+                rules.back()->predicateList.back().tuple.elements.push_back(*token);
+            }
+        }
 	}
 	else if(parseState == PARSING_QUERIES){
 		queries.back()->valueList.push_back(token);

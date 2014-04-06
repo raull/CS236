@@ -20,6 +20,7 @@
 #include "Facts.h"
 #include "Queries.h"
 #include "Relation.h"
+#include "Predicates.h"
 #include "Tuple.h"
 #include <vector>
 #include <set>
@@ -53,6 +54,7 @@ public:
 	Token* currentToken;
 	Token* prevToken;
 	int parseState;
+    int parseRuleState;
 	vector<Relation> relations;
 
 

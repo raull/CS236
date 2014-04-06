@@ -9,7 +9,7 @@
 
 Predicates::Predicates() {
 	// TODO Auto-generated constructor stub
-
+    this->name = "";
 }
 
 Predicates::~Predicates() {

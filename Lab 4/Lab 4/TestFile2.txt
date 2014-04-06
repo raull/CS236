@@ -7,7 +7,7 @@ Facts:
   SK('a','a','a').
   SK('b','c','b').
 Rules:
-  DoNothing(Z) :- Stuff(Z),SK(A,B,C).
+  SK(Z,Y,D) :- Stuff(Z,Y),SK(A,B,C).
 Queries:
   SK(A,'c',A)?
   SK(X,Y,'b')?

@@ -373,12 +373,10 @@ int main(int argc, char* argv[]) {
     Relation naturalJoinResult = Relation::naturalJoin(relation1, relation2);
     crossProductResult.name = "crossProduct";
     naturalJoinResult.name = "naturalJoin";
-    cout << crossProductResult.toString();
-    cout << relation1.toString();
-    cout << relation2.toString();
-    cout << naturalJoinResult.toString();
-    
-    
+    //cout << crossProductResult.toString();
+    //cout << relation1.toString();
+    //cout << relation2.toString();
+    //cout << naturalJoinResult.toString();
     
     
     return 0;

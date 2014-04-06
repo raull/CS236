@@ -25,3 +25,28 @@ string Rules::toString() const{
 	}
 	return result;
 }
+
+//void Rules::parseElements(){
+//    bool headPredicateSeen = false;
+//    Tuple headPredicateTuple;
+//    Tuple newPredicateTuple;
+//    string headPredicateName;
+//    string newPredicateName;
+//    
+//    for (int i=0; i<this->valueList.size(); i++) {
+//        Token currentToken = *valueList[i];
+//        if(currentToken.getTokenType() == ID && !headPredicateSeen){
+//            headPredicateSeen = true;
+//            headPredicateName = currentToken.getTokensValue();
+//        }
+//        else if (currentToken.getTokenType() == ID && headPredicateSeen){
+//            newPredicateName = currentToken.getTokensValue();
+//        }
+//        else if (currentToken.getTokenType() == RIGHT_PAREN){
+//            
+//        }
+//        else if (currentToken.getTokenType() == STRING){
+//            
+//        }
+//    }
+//}
