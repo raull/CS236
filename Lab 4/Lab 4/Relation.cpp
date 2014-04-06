@@ -110,15 +110,15 @@ void Relation::deleteTuple(int index){
 string Relation::parse(Queries query){
 	Relation editedRelation = *this;
 
-	editedRelation = rename(query, editedRelation);
-	editedRelation = select(query, editedRelation);
-	editedRelation = project(query, editedRelation);
+	editedRelation = rename(query.getTuple(), editedRelation);
+	editedRelation = select(query.getTuple(), editedRelation);
+	editedRelation = project(query.getTuple(), editedRelation);
 
 	return editedRelation.toFinalString(query);
 }
 
-Relation Relation::rename(Queries query, Relation relation){
-	Tuple tuple = query.getTuple();
+Relation Relation::rename(Tuple tuple, Relation relation){
+
 	for(int i=0; i<tuple.elements.size(); i++){
 		if(tuple.elements[i].getTokenType() == ID){
 			Token *newToken = new Token(ID, tuple.elements[i].getTokensValue() ,relation.schema[i].getLineNumber());
@@ -128,9 +128,9 @@ Relation Relation::rename(Queries query, Relation relation){
 	return relation;
 }
 
-Relation Relation::select(Queries query, Relation relation){
+Relation Relation::select(Tuple tuple, Relation relation){
 	vector<Tuple> newRows;
-	Tuple tuple = query.getTuple();
+
 	for(int i=0; i<relation.rows.size(); i++){
 		bool selected = true;
 		map<string, string> idMap;
@@ -170,11 +170,10 @@ Relation Relation::select(Queries query, Relation relation){
 }
 
 
-Relation Relation::project(Queries query, Relation relation){
+Relation Relation::project(Tuple tuple, Relation relation){
 
 	// Create a new Relation that add only the elements and schema that we are projecting
 
-	Tuple tuple = query.getTuple();
 	vector<Tuple> newRows;
 	vector<Token> newSchema;
 	// check rows

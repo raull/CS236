@@ -45,9 +45,9 @@ public:
 
 
 private:
-	Relation rename(Queries query, Relation relation);
-	Relation select(Queries query, Relation relation);
-	Relation project(Queries query, Relation relation);
+	Relation rename(Tuple tuple, Relation relation);
+	Relation select(Tuple tuple, Relation relation);
+	Relation project(Tuple tuple, Relation relation);
 };
 
 #endif /* RELATION_H_ */
