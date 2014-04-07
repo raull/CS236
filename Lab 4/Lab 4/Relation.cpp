@@ -111,6 +111,17 @@ string Relation::parse(Queries query){
 	return editedRelation.toFinalString(query);
 }
 
+Relation Relation::parse(Tuple tuple){
+    Relation editedRelation = *this;
+    
+	editedRelation = rename(tuple, editedRelation);
+	editedRelation = select(tuple, editedRelation);
+	editedRelation = project(tuple, editedRelation);
+    
+	return editedRelation;
+
+}
+
 Relation Relation::rename(Tuple tuple, Relation relation){
 
 	for(int i=0; i<tuple.elements.size(); i++){

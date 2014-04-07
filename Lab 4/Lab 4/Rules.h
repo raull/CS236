@@ -24,7 +24,6 @@ public:
     vector<Predicates> predicateList;
 
 	std::string toString() const;
-    //void parseElements();
 };
 
 #endif /* RULES_H_ */

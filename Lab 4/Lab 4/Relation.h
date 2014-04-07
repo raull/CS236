@@ -38,17 +38,19 @@ public:
 	void addTuple(Tuple tuple);
 	void deleteTuple(int index);
 	string parse(Queries query);
+    Relation parse(Tuple tuple);
     
     //Relation Operations
     static Relation crossProduct(Relation relation1, Relation relation2);
     static Relation naturalJoin(Relation relation1, Relation relation2);
-
-
-private:
-	Relation rename(Tuple tuple, Relation relation);
+    Relation rename(Tuple tuple, Relation relation);
 	Relation select(Tuple tuple, Relation relation);
 	Relation project(Tuple tuple, Relation relation);
-    	Tuple getRowAtIndex(int index);
+    Tuple getRowAtIndex(int index);
+
+private:
+	
+    
 
 };
 

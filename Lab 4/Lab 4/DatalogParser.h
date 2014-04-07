@@ -47,6 +47,7 @@ public:
 	Token* getCurrentToken();
 	void createRelationalDatabase();
 	void evaluateQueries();
+    void evaluateRules();
 
 	string toString() const;
 //Instance variables
@@ -56,6 +57,8 @@ public:
 	int parseState;
     int parseRuleState;
 	vector<Relation> relations;
+    Relation getRelationForName(string name);
+    Relation* getRelationPointerForName(string name);
 
 
 private:

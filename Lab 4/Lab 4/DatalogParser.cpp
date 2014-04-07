@@ -566,6 +566,47 @@ void DatalogParser::createRelationalDatabase(){
 	this->evaluateQueries();
 }
 
+void DatalogParser::evaluateRules(){
+    
+    bool loop = true;
+    
+    do{
+        loop = false;
+        vector<unsigned long> relationSizes;
+        
+        for (int i=0; i<relations.size(); i++) {
+            relationSizes.push_back(relations[i].rows.size());
+        }
+        
+        //For every Rule, iterate trough the predicate list, evaluate them, do natural join to them and project for the head predicate
+        for (int i=0; i<this->rules.size(); i++) {
+            vector<Relation> intermidiateResults;
+            for (int j=0; this->rules[i]->predicateList.size(); j++) {
+                Relation newResult = this->getRelationForName(rules[i]->predicateList[j].name);
+                newResult = newResult.parse(rules[i]->predicateList[j].tuple);
+                intermidiateResults.push_back(newResult);
+            }
+            Relation intermidiateRelation = intermidiateResults.front();
+            for (int j=1; j<intermidiateResults.size(); j++) {
+                intermidiateRelation = Relation::naturalJoin(intermidiateRelation, intermidiateResults[j]);
+            }
+            intermidiateRelation = intermidiateRelation.project(rules[i]->headPredicate.tuple, intermidiateRelation);
+            Relation *relationToEdit = getRelationPointerForName(rules[i]->headPredicate.name);
+            for (int j=0; j<intermidiateRelation.rows.size(); j++) {
+                relationToEdit->addTuple(intermidiateRelation.getRowAtIndex(j));
+            }
+        }
+        
+        for (int i=0; i<relations.size(); i++) {
+            if (relations[i].rows.size() != relationSizes[i]) {
+                loop = true;
+            }
+        }
+        
+    }while(loop);
+    
+}
+
 void DatalogParser::evaluateQueries(){
 	//cout << "\n Parsing Queries:  ("<< queries.size() <<")";
 	for(int i=0; i<queries.size(); i++){
@@ -575,6 +616,33 @@ void DatalogParser::evaluateQueries(){
 			}
 		}
 	}
+}
+
+Relation DatalogParser::getRelationForName(string name){
+    Relation matchedRelation;
+    
+    for (int i=0; i<this->relations.size(); i++) {
+        if (!relations[i].name.compare(name)) {
+            matchedRelation = relations[i];
+            break;
+        }
+    }
+    
+    return matchedRelation;
+}
+
+Relation* DatalogParser::getRelationPointerForName(string name){
+    
+    Relation* matchedRelation;
+    
+    for (int i=0; i<this->relations.size(); i++) {
+        if (!relations[i].name.compare(name)) {
+            matchedRelation = &relations[i];
+            break;
+        }
+    }
+    
+    return matchedRelation;
 }
 
 string DatalogParser::toString() const{
