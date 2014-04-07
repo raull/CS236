@@ -251,7 +251,7 @@ Relation Relation::naturalJoin(Relation relation1, Relation relation2){
             }
             if (equal) {
                 vector<Token> newVector = relation1.getRowAtIndex(i).elements;
-                vector<Token> vectorToProject = relation2.getRowAtIndex(i).elements;
+                vector<Token> vectorToProject = relation2.getRowAtIndex(j).elements;
                 
                 //Eliminate Intersected Columns
                 for (int k=pairIndexes.size() - 1.0; k>=0; k--) {

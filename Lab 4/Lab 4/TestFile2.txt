@@ -1,16 +1,28 @@
 Schemes:
-  SK(A,B,C)
+   A(a)
+   B(b)
+   DeaUoo(a,b,c,d,e)
+   DeaVoo(a,b,c,d,e)
+   DeaWoo(a,b,c,d,e)
+
 Facts:
-  SK('a','c','c').
-  SK('b','c','b').
-  SK('b','b','c').
-  SK('a','a','a').
-  SK('b','c','b').
-Rules:
-  SK(Z,Y,D) :- Stuff(Z,Y),SK(A,B,C).
+   A('a').
+   B('b').
+   DeaWoo('a','a','a','a','b').
+   DeaWoo('a','b','a','a','b').
+
+Rules: 
+   DeaWoo(A,B,C,D,E):-A(A),A(B),A(C),A(D),A(E).
+   DeaWoo(A,B,C,D,E):-A(A),A(B),B(C),A(D),A(E). 
+   DeaWoo(A,B,C,D,E):-A(E),B(D),A(C),B(B),A(A).
+   DeaUoo(E,D,C,B,A):-DeaWoo(A,B,C,D,E),A(B). 
+   DeaVoo(E,D,C,B,A):-DeaUoo(A,B,C,D,E),B(D).
+
 Queries:
-  SK(A,'c',A)?
-  SK(X,Y,'b')?
-  SK(X,X,X)?
-  SK(A,B,C)?
-  SK('a','a','a')?
+   DeaUoo(A,B,C,D,E)? 
+   DeaUoo(A,B,'a',D,E)?
+   DeaVoo(A,B,'a',D,E)?
+   DeaUoo(A,B,'b',D,E)?
+   DeaWoo(A,B,'a',D,Applestrudle)?
+   DeaWoo(A,B,'a',D,E)?
+   DeaWoo('a','a','a','a','b')?

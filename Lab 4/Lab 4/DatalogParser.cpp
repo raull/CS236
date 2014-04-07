@@ -563,6 +563,7 @@ void DatalogParser::createRelationalDatabase(){
 	}
 
 	//Evaluate
+    this->evaluateRules();
 	this->evaluateQueries();
 }
 
@@ -581,7 +582,7 @@ void DatalogParser::evaluateRules(){
         //For every Rule, iterate trough the predicate list, evaluate them, do natural join to them and project for the head predicate
         for (int i=0; i<this->rules.size(); i++) {
             vector<Relation> intermidiateResults;
-            for (int j=0; this->rules[i]->predicateList.size(); j++) {
+            for (int j=0; j<this->rules[i]->predicateList.size(); j++) {
                 Relation newResult = this->getRelationForName(rules[i]->predicateList[j].name);
                 newResult = newResult.parse(rules[i]->predicateList[j].tuple);
                 intermidiateResults.push_back(newResult);
