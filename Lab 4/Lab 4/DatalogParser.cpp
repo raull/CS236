@@ -35,10 +35,6 @@ DatalogParser::~DatalogParser() {
 
 bool DatalogParser::parse(){
 	if(parseSchemes() && parseFacts() && parseRules() && parseQueries()){
-		//cout<< toString();
-        //cout << "Head Predicate\n";
-        //cout << rules.size();
-        //cout << "Predicates\n";
 		return true;
 	}
 	else{
@@ -77,7 +73,7 @@ bool DatalogParser::parseRules(){
 }
 
 bool DatalogParser::parseQueries(){
-
+    
 	if(nQueries() && nColon() && nQuery() && nQueryList()){
 		return true;
 	}
@@ -251,7 +247,6 @@ bool DatalogParser::nQuery(){
 bool DatalogParser::nHeadPredicate(){
     parseRuleState = PARSING_HEADPREDICATE;
     Predicates newPredicate;
-    rules.back()->headPredicate = newPredicate;
 	if(nId() && nLeftParen() && nId() && nIdList() && nRightParen()){
 		return true;
 	}
@@ -545,7 +540,7 @@ Token* DatalogParser::getCurrentToken(){
 
 void DatalogParser::createRelationalDatabase(){
 	//Start Creating the Relations
-
+    
 	//Creating Schemes
 	for(int i=0; i<schemes.size(); i++){
 		Relation newRelation;

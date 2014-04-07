@@ -14,6 +14,7 @@ class Predicates {
 public:
 	Predicates();
 	virtual ~Predicates();
+    string toString() const;
     
     Tuple tuple;
     string name;

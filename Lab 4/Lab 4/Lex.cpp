@@ -369,9 +369,9 @@ int main(int argc, char* argv[]) {
     relation2.addTuple(secondRow1);
     relation2.addTuple(secondRow2);
     
-    Relation crossProductResult = Relation::crossProduct(relation1,relation2);
+    //Relation crossProductResult = Relation::crossProduct(relation1,relation2);
     Relation naturalJoinResult = Relation::naturalJoin(relation1, relation2);
-    crossProductResult.name = "crossProduct";
+    //crossProductResult.name = "crossProduct";
     naturalJoinResult.name = "naturalJoin";
     //cout << crossProductResult.toString();
     //cout << relation1.toString();

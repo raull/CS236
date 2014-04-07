@@ -28,7 +28,7 @@ public:
 
 	//Instance Methods
 	Token getElementAtIndex(int index);
-	string toString();
+	string toString() const;
 	bool operator<(const Tuple& tuple) const;
 };
 

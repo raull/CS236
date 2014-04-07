@@ -6,6 +6,8 @@
  */
 
 #include "Rules.h"
+#include "Tuple.h"
+#include <sstream>
 
 Rules::Rules() {
 	// TODO Auto-generated constructor stub
@@ -17,12 +19,16 @@ Rules::~Rules() {
 }
 
 string Rules::toString() const{
-	string result = "";
-	for(int i=0; i<valueList.size(); i++){
-		Token *tmp = valueList[i];
-		result += tmp->getTokensValue();
-		//cout << "The result is currently: " + result + "\n";
-	}
-	return result;
+	stringstream result;
+    
+	result << "Head Predicate " <<headPredicate.name << headPredicate.toString() << "\n";
+    
+    result << "List of Predicates\n";
+    for (int i=0; i<predicateList.size(); i++) {
+        result << predicateList[i].name  << predicateList[i].toString() << "\n";
+    }
+    
+	return result.str();
+
 }
 

@@ -24,7 +24,7 @@ Token Tuple::getElementAtIndex(int index){
 	return elements[index];
 }
 
-string Tuple::toString(){
+string Tuple::toString() const{
 
 	stringstream result;
 
