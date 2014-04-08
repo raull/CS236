@@ -212,10 +212,10 @@ Relation Relation::project(Tuple tuple, Relation relation){
     
     for (int i=0; i<tuple.elements.size(); i++) {
         for (int j=0; j<relation.schema.size(); j++) {
-            if (!tuple.elements[i].getTokensValue().compare(relation.schema[j].getTokensValue())) {
+            if (!tuple.elements[i].getTokensValue().compare(relation.schema[j].getTokensValue()) && tuple.elements[i].getTokenType() == ID) {
                 indexesToProject.push_back(j);
+                break;
             }
-            break;
         }
     }
     

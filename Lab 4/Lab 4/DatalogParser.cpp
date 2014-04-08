@@ -19,6 +19,7 @@
 #define PARSING_HEADPREDICATE 5
 #define PARSING_PREDICATE 6
 
+int ruleIterations = 0;
 
 DatalogParser::DatalogParser(vector<Token *> tokens) {
 	tokenList = tokens;
@@ -558,7 +559,9 @@ void DatalogParser::createRelationalDatabase(){
 	}
 
 	//Evaluate
+    
     this->evaluateRules();
+    cout<< "Schemes populated after " << ruleIterations << " passes through the Rules.\n";
 	this->evaluateQueries();
 }
 
@@ -567,6 +570,7 @@ void DatalogParser::evaluateRules(){
     bool loop = true;
     
     do{
+        ruleIterations++;
         loop = false;
         vector<unsigned long> relationSizes;
         
@@ -578,8 +582,10 @@ void DatalogParser::evaluateRules(){
         for (int i=0; i<this->rules.size(); i++) {
             vector<Relation> intermidiateResults;
             for (int j=0; j<this->rules[i]->predicateList.size(); j++) {
+                //cout << "\nDoing Query for " << rules[i]->predicateList[j].tuple.toString();
                 Relation newResult = this->getRelationForName(rules[i]->predicateList[j].name);
                 newResult = newResult.parse(rules[i]->predicateList[j].tuple);
+                //cout << " To relation:\n" << newResult.toString();
                 intermidiateResults.push_back(newResult);
             }
             Relation intermidiateRelation = intermidiateResults.front();
