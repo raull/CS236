@@ -179,33 +179,66 @@ Relation Relation::project(Tuple tuple, Relation relation){
 
 	// Create a new Relation that add only the elements and schema that we are projecting
 
-	set<Tuple> newRows;
-
-	vector<Token> newSchema;
-	// check rows
-	for(int i=0; i<relation.rows.size(); i++){
-		vector<string> projectedIds;
-		vector<Token> newElements;
-		for(int j=0; j<tuple.elements.size(); j++){
-			if(tuple.elements[j].getTokenType() == ID){
-				bool isPresent = find(projectedIds.begin(), projectedIds.end(), tuple.elements[j].getTokensValue()) != projectedIds.end();
-				//If we haven't projected this ID before
-				if(!isPresent){
-					projectedIds.push_back(tuple.elements[j].getTokensValue());
-					if(i==0){
-						newSchema.push_back(relation.schema[j]);
-					}
-					newElements.push_back(relation.getRowAtIndex(i).elements[j]);
-				}
-			}
-		}
-		Tuple newTuple(newElements);
-		newRows.insert(newTuple);
-	}
-
-	relation.rows = newRows;
-	relation.schema = newSchema;
-
+//	set<Tuple> newRows;
+//
+//	vector<Token> newSchema;
+//	// check rows
+//	for(int i=0; i<relation.rows.size(); i++){
+//		vector<string> projectedIds;
+//		vector<Token> newElements;
+//		for(int j=0; j<tuple.elements.size(); j++){
+//			if(tuple.elements[j].getTokenType() == ID){
+//				bool isPresent = find(projectedIds.begin(), projectedIds.end(), tuple.elements[j].getTokensValue()) != projectedIds.end();
+//				//If we haven't projected this ID before
+//				if(!isPresent){
+//					projectedIds.push_back(tuple.elements[j].getTokensValue());
+//					if(i==0){
+//						newSchema.push_back(relation.schema[j]);
+//					}
+//					newElements.push_back(relation.getRowAtIndex(i).elements[j]);
+//				}
+//			}
+//		}
+//		Tuple newTuple(newElements);
+//		newRows.insert(newTuple);
+//	}
+//
+//	relation.rows = newRows;
+//	relation.schema = newSchema;
+    
+    vector<int> indexesToProject;
+    
+    //Determine which columsn are getting projected
+    
+    for (int i=0; i<tuple.elements.size(); i++) {
+        for (int j=0; j<relation.schema.size(); j++) {
+            if (!tuple.elements[i].getTokensValue().compare(relation.schema[j].getTokensValue())) {
+                indexesToProject.push_back(j);
+            }
+            break;
+        }
+    }
+    
+    //Select those columns
+    set<Tuple> newRows;
+    
+    for (int i=0; i<relation.rows.size(); i++) {
+        Tuple newTuple;
+        for (int j=0; j<indexesToProject.size(); j++) {
+            newTuple.elements.push_back(relation.getRowAtIndex(i).elements[indexesToProject[j]]);
+        }
+        newRows.insert(newTuple);
+    }
+    
+    //Select the Schema
+    vector<Token> newSchema;
+    for (int i=0; i<indexesToProject.size(); i++) {
+        newSchema.push_back(relation.schema[indexesToProject[i]]);
+    }
+    
+    relation.rows = newRows;
+    relation.schema = newSchema;
+    
 	return relation;
 }
 
